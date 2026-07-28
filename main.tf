@@ -4,6 +4,7 @@ locals {
   eks_cluster_oidc_issuer = local.enabled ? replace(var.eks_cluster_oidc_issuer_url, "https://", "") : ""
 
   aws_account_number = local.enabled ? coalesce(var.aws_account_number, data.aws_caller_identity.current[0].account_id) : ""
+  aws_partition      = local.enabled ? coalesce(var.aws_partition, data.aws_partition.current[0].partition) : ""
 
   # If both var.service_account_namespace and var.service_account_name are provided,
   # then the role ARN will have one of the following formats:
@@ -44,6 +45,10 @@ data "aws_caller_identity" "current" {
   count = local.enabled ? 1 : 0
 }
 
+data "aws_partition" "current" {
+  count = local.enabled ? 1 : 0
+}
+
 module "service_account_label" {
   source  = "cloudposse/label/null"
   version = "0.25.0"
@@ -80,7 +85,7 @@ data "aws_iam_policy_document" "service_account_assume_role" {
 
     principals {
       type        = "Federated"
-      identifiers = [format("arn:%s:iam::%s:oidc-provider/%s", var.aws_partition, local.aws_account_number, local.eks_cluster_oidc_issuer)]
+      identifiers = [format("arn:%s:iam::%s:oidc-provider/%s", local.aws_partition, local.aws_account_number, local.eks_cluster_oidc_issuer)]
     }
 
     condition {

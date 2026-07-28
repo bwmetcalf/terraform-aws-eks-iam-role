@@ -32,8 +32,11 @@ variable "aws_account_number" {
 
 variable "aws_partition" {
   type        = string
-  default     = "aws"
-  description = "AWS partition: 'aws', 'aws-cn', or 'aws-us-gov'"
+  default     = null
+  description = <<-EOT
+    AWS partition: 'aws', 'aws-cn', or 'aws-us-gov'.
+    If a partition is not provided, the provider partition will be used.
+    EOT
 }
 
 variable "aws_iam_policy_document" {
