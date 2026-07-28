@@ -47,6 +47,16 @@ variable "aws_iam_policy_document" {
     EOT
 }
 
+variable "iam_policy_enabled" {
+  type        = bool
+  default     = false
+  description = <<-EOT
+    Whether or not to attach the custom IAM policy specified in `aws_iam_policy_document`.
+    This is required because plans will fail if the IAM policy contains references
+    that are not known at plan time.
+    EOT
+}
+
 variable "eks_cluster_oidc_issuer_url" {
   type        = string
   description = "OIDC issuer URL for the EKS cluster (initial \"https://\" may be omitted)"
